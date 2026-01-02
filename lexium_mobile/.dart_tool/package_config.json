@@ -51,15 +51,21 @@
     },
     {
       "name": "flutter_lints",
-      "rootUri": "file:///C:/Users/nadee/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_lints-6.0.0",
+      "rootUri": "file:///C:/Users/nadee/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_lints-5.0.0",
       "packageUri": "lib/",
-      "languageVersion": "3.8"
+      "languageVersion": "3.5"
     },
     {
       "name": "flutter_test",
       "rootUri": "file:///D:/Flutter/sdk/flutter/packages/flutter_test",
       "packageUri": "lib/",
       "languageVersion": "3.8"
+    },
+    {
+      "name": "font_awesome_flutter",
+      "rootUri": "file:///C:/Users/nadee/AppData/Local/Pub/Cache/hosted/pub.dev/font_awesome_flutter-10.12.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.9"
     },
     {
       "name": "leak_tracker",
@@ -81,9 +87,9 @@
     },
     {
       "name": "lints",
-      "rootUri": "file:///C:/Users/nadee/AppData/Local/Pub/Cache/hosted/pub.dev/lints-6.0.0",
+      "rootUri": "file:///C:/Users/nadee/AppData/Local/Pub/Cache/hosted/pub.dev/lints-5.1.1",
       "packageUri": "lib/",
-      "languageVersion": "3.8"
+      "languageVersion": "3.6"
     },
     {
       "name": "matcher",
@@ -167,7 +173,7 @@
       "name": "lexium_mobile",
       "rootUri": "../",
       "packageUri": "lib/",
-      "languageVersion": "3.10"
+      "languageVersion": "3.5"
     }
   ],
   "generator": "pub",
