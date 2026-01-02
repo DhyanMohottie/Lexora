@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:lexium_mobile/components/signup_form.dart';
+import 'package:lexium_mobile/widgets/signup_form.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lexium_mobile/components/login_form.dart';
+import 'package:lexium_mobile/widgets/login_form.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LoginPage extends StatefulWidget {

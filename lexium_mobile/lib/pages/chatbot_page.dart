@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lexium_mobile/components/chat_field.dart';
+import 'package:lexium_mobile/widgets/chat_field.dart';
 
 class ChatBotPage extends StatefulWidget {
   const ChatBotPage({super.key});
