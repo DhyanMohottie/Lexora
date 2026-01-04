@@ -199,23 +199,23 @@ class SymbolicRulesEngine:
     def _generate_explanation(self, is_valid: bool, satisfied: List[str], 
                             violations: List[str], confidence: float) -> str:
         if is_valid:
-            explanation = f"✅ VALID (Confidence: {confidence:.1%})\n\n"
+            explanation = f" VALID (Confidence: {confidence:.1%})\n\n"
             explanation += f"Satisfied {len(satisfied)}/{len(self.rules)} rules:\n"
             for rule in satisfied:
-                explanation += f"  ✓ {rule.replace('_', ' ').title()}\n"
+                explanation += f"   {rule.replace('_', ' ').title()}\n"
             if violations:
                 explanation += f"\nMinor issues ({len(violations)}):\n"
                 for rule in violations:
-                    explanation += f"  ⚠ {rule.replace('_', ' ').title()}\n"
+                    explanation += f"   {rule.replace('_', ' ').title()}\n"
         else:
-            explanation = f"❌ INVALID (Confidence: {confidence:.1%})\n\n"
+            explanation = f" INVALID (Confidence: {confidence:.1%})\n\n"
             explanation += f"Rule violations ({len(violations)}):\n"
             for rule in violations:
-                explanation += f"  ✗ {rule.replace('_', ' ').title()}\n"
+                explanation += f"   {rule.replace('_', ' ').title()}\n"
             if satisfied:
                 explanation += f"\nSatisfied rules ({len(satisfied)}):\n"
                 for rule in satisfied[:3]:
-                    explanation += f"  ✓ {rule.replace('_', ' ').title()}\n"
+                    explanation += f"   {rule.replace('_', ' ').title()}\n"
         return explanation
 
 
