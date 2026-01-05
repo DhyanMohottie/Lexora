@@ -1,6 +1,3 @@
-"""
-Inspect the trained model checkpoint to get EXACT architecture
-"""
 import torch
 
 print("=" * 70)
