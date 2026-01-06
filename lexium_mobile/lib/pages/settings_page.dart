@@ -62,8 +62,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Column(
                   children: [
                     ListTile(
-                      leading: Icon(Icons.lock),
-                      title: Text('Change Password'),
+                      leading: Icon(Icons.manage_accounts),
+                      title: Text('Manage Account'),
                       trailing: Icon(Icons.chevron_right),
                     ),
                   ],
@@ -89,8 +89,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       trailing: Icon(Icons.chevron_right),
                     ),
                     ListTile(
-                      leading: Icon(Icons.language),
-                      title: Text('Language'),
+                      leading: Icon(Icons.light_mode),
+                      title: Text('Appearance'),
                       trailing: Icon(Icons.chevron_right),
                     ),
                   ],
