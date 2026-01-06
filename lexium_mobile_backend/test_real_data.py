@@ -13,9 +13,9 @@ test_claims = [
 ]
 
 for i, claim in enumerate(test_claims, 1):
-    print(f"\n{'='*70}")
+   
     print(f"Test {i}: {claim}")
-    print('='*70)
+    
     
     result = validate_claim(claim)
     

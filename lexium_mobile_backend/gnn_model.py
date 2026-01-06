@@ -169,7 +169,7 @@ def load_gnn_model(model_path='legal_gnn_trained_no_cases.pt', device='cpu'):
     node_types = checkpoint.get('node_types', ['document', 'statute', 'section', 'claim'])
     edge_types = checkpoint.get('edge_types', [])
     
-    print(f"✅ Loaded checkpoint with {len(edge_types)} edge types")
+    print(f" Loaded checkpoint with {len(edge_types)} edge types")
     
     model = LegalHeteroGNN(
         node_types=node_types,
@@ -183,7 +183,7 @@ def load_gnn_model(model_path='legal_gnn_trained_no_cases.pt', device='cpu'):
     model.load_state_dict(checkpoint['model_state_dict'])
     model.eval()
     
-    print(f"✅ Model loaded successfully!")
+    print(f" Model loaded successfully!")
     print(f"   Node types: {node_types}")
     print(f"   Edge types: {len(edge_types)} total")
     
