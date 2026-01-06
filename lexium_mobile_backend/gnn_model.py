@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from torch_geometric.nn import HeteroConv, GATConv, Linear
 from torch_geometric.data import HeteroData
 import numpy as np
@@ -8,44 +9,51 @@ from sentence_transformers import SentenceTransformer
 
 class LegalHeteroGNN(nn.Module):
     """
-    Heterogeneous Graph Attention Network - FIXED VERSION
+    Heterogeneous Graph Attention Network - UPDATED for NEW trained model
+    Handles 10 edge types: 3 forward + 3 reverse + 4 self-loops
     """
     
-    def __init__(self, node_types, edge_types, hidden_dim=128, num_layers=2, num_heads=4):
+    def __init__(self, node_types, edge_types, hidden_dim=128, num_layers=2, num_heads=4, dropout=0.3):
         super().__init__()
         
         self.node_types = node_types
-        self.edge_types = edge_types  # Original edge types
+        self.edge_types = edge_types
         self.hidden_dim = hidden_dim
+        self.num_layers = num_layers
         
-        # Node embeddings (matches trained model: "node_embeddings")
+        # Node embeddings
         self.node_embeddings = nn.ModuleDict({
-            node_type: Linear(768, hidden_dim)
-            for node_type in node_types
+            'document': Linear(768, hidden_dim),
+            'statute': Linear(768, hidden_dim),
+            'section': Linear(768, hidden_dim),
+            'claim': Linear(768, hidden_dim),
         })
         
-        # Layer normalization (matches trained model: "layer_norms")
-        self.layer_norms = nn.ModuleList()
-        for _ in range(num_layers):
-            layer_norm_dict = nn.ModuleDict({
-                node_type: nn.LayerNorm(hidden_dim)
-                for node_type in node_types
-            })
-            self.layer_norms.append(layer_norm_dict)
+        # Layer normalization
+        self.layer_norms = nn.ModuleList([
+            nn.ModuleDict({node_type: nn.LayerNorm(hidden_dim) for node_type in node_types})
+            for _ in range(num_layers)
+        ])
         
-        # Graph convolution layers
+        # Graph convolution layers - BUILD ALL EDGE TYPES
         self.convs = nn.ModuleList()
         for _ in range(num_layers):
             conv_dict = {}
+            
+            # Add ALL edge types that exist in checkpoint
             for edge_type in edge_types:
                 src, rel, dst = edge_type
+                is_self_loop = rel.startswith('self_')
+                
                 conv_dict[edge_type] = GATConv(
                     (hidden_dim, hidden_dim),
                     hidden_dim // num_heads,
                     heads=num_heads,
                     concat=True,
-                    add_self_loops=False
+                    dropout=dropout,
+                    add_self_loops=is_self_loop
                 )
+            
             self.convs.append(HeteroConv(conv_dict, aggr='mean'))
         
         # Output heads
@@ -53,117 +61,131 @@ class LegalHeteroGNN(nn.Module):
             'citation_validity': nn.Sequential(
                 Linear(hidden_dim, hidden_dim),
                 nn.ReLU(),
-                nn.Dropout(0.3),
+                nn.Dropout(dropout),
                 Linear(hidden_dim, 1)
             ),
             'relevance_score': nn.Sequential(
                 Linear(hidden_dim, hidden_dim),
                 nn.ReLU(),
-                nn.Dropout(0.3),
+                nn.Dropout(dropout),
                 Linear(hidden_dim, 1)
             ),
             'coherence_score': nn.Sequential(
                 Linear(hidden_dim, hidden_dim),
                 nn.ReLU(),
-                nn.Dropout(0.3),
+                nn.Dropout(dropout),
                 Linear(hidden_dim, 1)
-            )
+            ),
         })
+        
+        self.dropout = nn.Dropout(dropout)
     
     def forward(self, data):
-        """Forward pass - FIXED VERSION"""
+        """Forward pass"""
+        # Initial embeddings
         x_dict = {}
-        
-        # Encode node features with embeddings
         for node_type in self.node_types:
-            if node_type in data.x_dict and data.x_dict[node_type] is not None:
+            if node_type in data.x_dict:
                 x_dict[node_type] = self.node_embeddings[node_type](data.x_dict[node_type])
         
-        # IMPORTANT: Only use edges that exist in the model's HeteroConv
-        edge_index_dict = {}
-        for edge_type in self.edge_types:
-            if edge_type in data.edge_index_dict:
-                src_type, _, dst_type = edge_type
-                # Only include edge if BOTH source and dest node types have features
-                if src_type in x_dict and dst_type in x_dict:
-                    edge_index_dict[edge_type] = data.edge_index_dict[edge_type]
+        # Add bidirectional edges (model expects them)
+        edge_index_dict = self._add_bidirectional_edges(data.edge_index_dict)
         
-        # Store initial claim embedding for fallback
-        initial_claim_emb = x_dict.get('claim', None)
-        
-        # Apply graph convolutions with layer norms
+        # Graph convolutions
         for i, conv in enumerate(self.convs):
-            if len(edge_index_dict) > 0:
-                x_dict_new = conv(x_dict, edge_index_dict)
-                
-                # Apply layer norm and activation
-                for node_type in x_dict_new:
-                    if node_type in self.layer_norms[i]:
-                        x_dict_new[node_type] = torch.relu(
-                            self.layer_norms[i][node_type](x_dict_new[node_type])
-                        )
-                
-                # Keep nodes that didn't get updated (no incoming edges)
-                for node_type in x_dict:
-                    if node_type not in x_dict_new:
-                        x_dict_new[node_type] = x_dict[node_type]
-                
-                x_dict = x_dict_new
+            x_dict_new = conv(x_dict, edge_index_dict)
+            
+            for node_type in x_dict_new:
+                x_dict_new[node_type] = F.relu(x_dict_new[node_type])
+                x_dict_new[node_type] = self.layer_norms[i][node_type](x_dict_new[node_type])
+                x_dict_new[node_type] = self.dropout(x_dict_new[node_type])
+            
+            x_dict = x_dict_new
         
-        # Get claim embeddings for prediction
-        if 'claim' in x_dict and x_dict['claim'] is not None:
-            claim_emb = x_dict['claim']
-        elif initial_claim_emb is not None:
-            # Fallback to initial embedding if claim wasn't updated
-            claim_emb = initial_claim_emb
-        else:
-            raise RuntimeError("No claim embeddings available!")
+        # Get claim embeddings
+        claim_embeddings = x_dict['claim']
         
-        # Predict scores
-        validity = torch.sigmoid(self.output_heads['citation_validity'](claim_emb))
-        relevance = torch.sigmoid(self.output_heads['relevance_score'](claim_emb))
-        coherence = torch.sigmoid(self.output_heads['coherence_score'](claim_emb))
-        
-        return {
-            'validity_scores': validity,
-            'relevance_scores': relevance,
-            'coherence_scores': coherence
+        # Predictions
+        outputs = {
+            'embeddings': claim_embeddings,
+            'validity_scores': torch.sigmoid(self.output_heads['citation_validity'](claim_embeddings)),
+            'relevance_scores': torch.sigmoid(self.output_heads['relevance_score'](claim_embeddings)),
+            'coherence_scores': torch.sigmoid(self.output_heads['coherence_score'](claim_embeddings)),
         }
+        
+        return outputs
+    
+    def _add_bidirectional_edges(self, edge_index_dict):
+        """Add reverse edges and self-loops"""
+        new_dict = {}
+        
+        # Get device
+        device = None
+        for edge_type, edge_index in edge_index_dict.items():
+            if edge_index.size(1) > 0:
+                device = edge_index.device
+                break
+        if device is None:
+            device = torch.device('cpu')
+        
+        # Copy original
+        for edge_type, edge_index in edge_index_dict.items():
+            new_dict[edge_type] = edge_index
+        
+        # Add reverse
+        for edge_type, edge_index in edge_index_dict.items():
+            src_type, rel, dst_type = edge_type
+            reverse_edge = (dst_type, f'rev_{rel}', src_type)
+            reversed_index = torch.stack([edge_index[1], edge_index[0]], dim=0)
+            new_dict[reverse_edge] = reversed_index
+        
+        # Add self-loops
+        for node_type in self.node_types:
+            self_edge = (node_type, f'self_{node_type}', node_type)
+            max_idx = 0
+            
+            for edge_type, edge_index in edge_index_dict.items():
+                src_type, _, dst_type = edge_type
+                if edge_index.size(1) > 0:
+                    if src_type == node_type:
+                        max_idx = max(max_idx, edge_index[0].max().item())
+                    if dst_type == node_type:
+                        max_idx = max(max_idx, edge_index[1].max().item())
+            
+            if max_idx > 0:
+                num_nodes = max_idx + 1
+                self_loops = torch.arange(num_nodes, dtype=torch.long, device=device)
+                new_dict[self_edge] = torch.stack([self_loops, self_loops], dim=0)
+        
+        return new_dict
 
 
 def load_gnn_model(model_path='legal_gnn_trained_no_cases.pt', device='cpu'):
     """Load the trained GNN model"""
     print(f"Loading GNN model from: {model_path}")
     
-    checkpoint = torch.load(model_path, map_location=device)
+    checkpoint = torch.load(model_path, map_location=device, weights_only=False)
     
     node_types = checkpoint.get('node_types', ['document', 'statute', 'section', 'claim'])
-    edge_types_saved = checkpoint.get('edge_types', [])
+    edge_types = checkpoint.get('edge_types', [])
     
-    if not edge_types_saved or len(edge_types_saved) == 0:
-        edge_types = [
-            ('document', 'cites', 'statute'),
-            ('document', 'references', 'section'),
-            ('claim', 'references', 'statute'),
-        ]
-    else:
-        edge_types = edge_types_saved
+    print(f"✅ Loaded checkpoint with {len(edge_types)} edge types")
     
     model = LegalHeteroGNN(
         node_types=node_types,
         edge_types=edge_types,
         hidden_dim=128,
         num_layers=2,
-        num_heads=4
+        num_heads=4,
+        dropout=0.3
     )
     
-    # Load weights with strict=False to handle any mismatches
-    model.load_state_dict(checkpoint['model_state_dict'], strict=False)
+    model.load_state_dict(checkpoint['model_state_dict'])
     model.eval()
     
-    print(f" Model loaded successfully!")
+    print(f"✅ Model loaded successfully!")
     print(f"   Node types: {node_types}")
-    print(f"   Edge types: {edge_types}")
+    print(f"   Edge types: {len(edge_types)} total")
     
     return model, checkpoint
 
@@ -176,57 +198,40 @@ class GNNPredictor:
         self.model, self.checkpoint = load_gnn_model(model_path, self.device)
         self.embedder = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
         
-        # Get edge types from the model
-        self.edge_types = self.model.edge_types
-        
     def predict(self, claim_text):
         """Predict validity of a legal claim"""
         # Generate embedding
         claim_embedding = self.embedder.encode([claim_text], convert_to_numpy=True)
         
-        # Pad to 768 dimensions if needed (MiniLM outputs 384)
+        # Pad to 768 dimensions
         if claim_embedding.shape[1] < 768:
             padding = np.zeros((1, 768 - claim_embedding.shape[1]))
             claim_embedding = np.concatenate([claim_embedding, padding], axis=1)
         
-        # Create graph structure with ALL required node types
+        # Create graph structure
         data = HeteroData()
         
-        # Add nodes - ensure all node types have features
+        # Add nodes
         data['document'].x = torch.randn(5, 768)
         data['statute'].x = torch.randn(10, 768)
         data['section'].x = torch.randn(5, 768)
         data['claim'].x = torch.FloatTensor(claim_embedding)
         
-        # Add ONLY the edges that the model was trained with
-        # These must match self.edge_types exactly
+        # Add edges (only the 3 original - model will add reverse + self-loops)
+        data['document', 'cites', 'statute'].edge_index = torch.LongTensor([
+            [0, 1, 2, 3, 4],
+            [0, 2, 4, 6, 8]
+        ])
         
-        # Check which edge types the model expects and create them
-        for edge_type in self.edge_types:
-            src, rel, dst = edge_type
-            
-            if edge_type == ('document', 'cites', 'statute'):
-                data[edge_type].edge_index = torch.LongTensor([
-                    [0, 1, 2, 3, 4],
-                    [0, 2, 4, 6, 8]
-                ])
-            elif edge_type == ('document', 'references', 'section'):
-                data[edge_type].edge_index = torch.LongTensor([
-                    [0, 1, 2],
-                    [0, 2, 4]
-                ])
-            elif edge_type == ('claim', 'references', 'statute'):
-                data[edge_type].edge_index = torch.LongTensor([
-                    [0, 0, 0],
-                    [0, 1, 2]
-                ])
-            else:
-                # For any other edge type, create a minimal connection
-                print(f"   Creating minimal edges for: {edge_type}")
-                data[edge_type].edge_index = torch.LongTensor([
-                    [0],
-                    [0]
-                ])
+        data['document', 'references', 'section'].edge_index = torch.LongTensor([
+            [0, 1, 2],
+            [0, 2, 4]
+        ])
+        
+        data['claim', 'references', 'statute'].edge_index = torch.LongTensor([
+            [0, 0, 0],
+            [0, 1, 2]
+        ])
         
         # Run inference
         with torch.no_grad():
@@ -266,19 +271,3 @@ def predict_claim(claim_text):
     return _PREDICTOR.predict(claim_text)
 
 
-# Quick test
-if __name__ == "__main__":
-    test_claim = "The defendant violated Section 2 of the Consumer Protection Act"
-    print(f"\nTesting with claim: {test_claim}\n")
-    
-    try:
-        result = predict_claim(test_claim)
-        print("Results:")
-        print(f"  Validity:  {result['validity']:.4f}")
-        print(f"  Relevance: {result['relevance']:.4f}")
-        print(f"  Coherence: {result['coherence']:.4f}")
-        print(f"  Overall:   {result['overall']:.4f}")
-    except Exception as e:
-        print(f"Error: {e}")
-        import traceback
-        traceback.print_exc()
