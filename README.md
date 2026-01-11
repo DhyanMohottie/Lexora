@@ -169,7 +169,7 @@ Replace a single or multiple claims of the test_real_data.py with a different se
     "The plaintiff's claim under the Bribery Act and Section 10 is well-founded" with "I drank water"
 
 
-### 5.Navigate to Mobile app
+### 5. Navigate to Mobile app
 
 ```bash
 cd ..
@@ -178,13 +178,13 @@ cd ..
 cd lexium_mobile
 ```
 
-### 6.Get Dependencies
+### 6. Get Dependencies
 
 ```bash
 flutter pub get
 ```
 
-### 7.Run App
+### 7. Run App
 
 ```bash
 flutter run
