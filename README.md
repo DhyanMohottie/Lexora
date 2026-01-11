@@ -30,6 +30,8 @@ The work to be done as follows;
 - Python 3.8 or higher
 - pip (Python package manager)
 - Flutter sdk
+- VS Code
+- Android Emulator/Physical Device
 
 ### Quick Start
 
@@ -55,6 +57,9 @@ source venv/bin/activate
 ```
 
 ### 3. Install Dependencies
+
+All dependencies are in `requirements.txt`
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -106,6 +111,8 @@ Flask-JWT-Extended>=4.5.0
 tqdm>=4.66.0
 requests>=2.31.0
 python-dotenv>=1.0.0
+
+### 4. Run Tests
 
 ### Test 1: Run GNN Test
 ```bash
@@ -160,3 +167,25 @@ Replace a single or multiple claims of the test_real_data.py with a different se
     AND
     
     "The plaintiff's claim under the Bribery Act and Section 10 is well-founded" with "I drank water"
+
+
+### 5.Navigate to Mobile app
+
+```bash
+cd ..
+```
+```bash
+cd lexium_mobile
+```
+
+### 6.Get Dependencies
+
+```bash
+flutter pub get
+```
+
+### 7.Run App
+
+```bash
+flutter run
+```
