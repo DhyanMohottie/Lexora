@@ -1,4 +1,4 @@
-<span style="color:blue"># Lexium Mobile</span>
+# <span style="color:blue">Lexium Mobile</span>
 
 ## This is a Mobile app Integrated with Neurosymbolic AI, focused on giving legal information for general public.
 
@@ -12,7 +12,7 @@ The work to be done as follows;
 
 * Integration with flask API
 * Backend for the mobile app to connect with the legal data trained chat-bot.
-* Neural Netwrok.
+* Neural Network.
 * Backend for the mobile app to connect with the Fusion Neural Network. 
 
 ## System Architecture Diagram
@@ -63,11 +63,11 @@ pip install -r requirements.txt
 ### Core Dependencies
 
 
-<u><b>Core Deep Learning<b></u>
+<u>**Core Deep Learning**</u>
 
 torch==2.2.2
 
-**Graph Neural Networks**
+<u><b>Graph Neural Networks</b></u>
 
 torch-geometric==2.7.0
 torch-scatter>=2.1.0
