@@ -63,15 +63,19 @@ pip install -r requirements.txt
 ### Core Dependencies
 
 **Core Deep Learning**
+
+
 torch==2.2.2
 
 **Graph Neural Networks**
+
 
 torch-geometric==2.7.0
 torch-scatter>=2.1.0
 torch-sparse>=0.6.18
 
 **NLP & Embeddings**
+
 
 sentence-transformers==5.2.0
 transformers>=4.30.0
@@ -81,6 +85,7 @@ safetensors>=0.3.0
 
 **Data Science**
 
+
 numpy==2.4.1
 pandas==2.3.3
 scikit-learn>=1.3.0
@@ -89,12 +94,14 @@ scipy>=1.10.0
 
 **Web Framework**
 
+
 Flask>=3.0.0
 Flask-CORS>=4.0.0
 Flask-JWT-Extended>=4.5.0
 
 
 **Utilities**
+
 
 tqdm>=4.66.0
 requests>=2.31.0
