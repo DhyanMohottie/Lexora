@@ -1,4 +1,4 @@
-# Lexium Mobile
+<span style="color:blue"># Lexium Mobile</span>
 
 ## This is a Mobile app Integrated with Neurosymbolic AI, focused on giving legal information for general public.
 
@@ -62,7 +62,9 @@ pip install -r requirements.txt
 ##  Dependencies
 ### Core Dependencies
 
-**Core Deep Learning**
+
+<u><b>Core Deep Learning<b></u>
+
 torch==2.2.2
 
 **Graph Neural Networks**
