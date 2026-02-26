@@ -1,11 +1,9 @@
 from gnn_model import predict_claim
 
+claim = "The defendant violated Section 152 of the Motor Traffic Act by failing to exercise reasonable duty of care while operating a motor vehicle, resulting in damages to the plaintiff's property"
 
-claim = "The defendant violated Section 2 of the Service Contracts Ordinance"
 
 result = predict_claim(claim)
 
-print(f"Overall Score: {result['overall']:.1%}")
-print(f"Validity: {result['validity']:.1%}")
-print(f"Relevance: {result['relevance']:.1%}")
-print(f"Coherence: {result['coherence']:.1%}")
+print(f"GNN Score: {result['gnn_score']:.1%}")
+print(f"Overall: {result['overall']:.1%}")

@@ -9,8 +9,9 @@ from sentence_transformers import SentenceTransformer
 
 class LegalHeteroGNN(nn.Module):
     """
-    Heterogeneous Graph Attention Network - UPDATED for NEW trained model
+    Heterogeneous Graph Attention Network with SINGLE output head
     Handles 10 edge types: 3 forward + 3 reverse + 4 self-loops
+    Output: Single GNN score (legal pattern match)
     """
     
     def __init__(self, node_types, edge_types, hidden_dim=128, num_layers=2, num_heads=4, dropout=0.3):
@@ -56,27 +57,14 @@ class LegalHeteroGNN(nn.Module):
             
             self.convs.append(HeteroConv(conv_dict, aggr='mean'))
         
-        # Output heads
-        self.output_heads = nn.ModuleDict({
-            'citation_validity': nn.Sequential(
-                Linear(hidden_dim, hidden_dim),
-                nn.ReLU(),
-                nn.Dropout(dropout),
-                Linear(hidden_dim, 1)
-            ),
-            'relevance_score': nn.Sequential(
-                Linear(hidden_dim, hidden_dim),
-                nn.ReLU(),
-                nn.Dropout(dropout),
-                Linear(hidden_dim, 1)
-            ),
-            'coherence_score': nn.Sequential(
-                Linear(hidden_dim, hidden_dim),
-                nn.ReLU(),
-                nn.Dropout(dropout),
-                Linear(hidden_dim, 1)
-            ),
-        })
+        # ✅ SINGLE OUTPUT HEAD with Sigmoid
+        self.output_head = nn.Sequential(
+            Linear(hidden_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(dropout),
+            Linear(hidden_dim, 1),
+            nn.Sigmoid()  # Ensures 0-1 output
+        )
         
         self.dropout = nn.Dropout(dropout)
     
@@ -105,15 +93,13 @@ class LegalHeteroGNN(nn.Module):
         # Get claim embeddings
         claim_embeddings = x_dict['claim']
         
-        # Predictions
-        outputs = {
-            'embeddings': claim_embeddings,
-            'validity_scores': torch.sigmoid(self.output_heads['citation_validity'](claim_embeddings)),
-            'relevance_scores': torch.sigmoid(self.output_heads['relevance_score'](claim_embeddings)),
-            'coherence_scores': torch.sigmoid(self.output_heads['coherence_score'](claim_embeddings)),
-        }
+        # ✅ SINGLE OUTPUT
+        gnn_score = self.output_head(claim_embeddings)
         
-        return outputs
+        return {
+            'embeddings': claim_embeddings,
+            'gnn_score': gnn_score  # Single score (0-1)
+        }
     
     def _add_bidirectional_edges(self, edge_index_dict):
         """Add reverse edges and self-loops"""
@@ -160,7 +146,7 @@ class LegalHeteroGNN(nn.Module):
         return new_dict
 
 
-def load_gnn_model(model_path='legal_gnn_trained_no_cases.pt', device='cpu'):
+def load_gnn_model(model_path='legal_gnn.pt', device='cpu'):
     """Load the trained GNN model"""
     print(f"Loading GNN model from: {model_path}")
     
@@ -169,7 +155,7 @@ def load_gnn_model(model_path='legal_gnn_trained_no_cases.pt', device='cpu'):
     node_types = checkpoint.get('node_types', ['document', 'statute', 'section', 'claim'])
     edge_types = checkpoint.get('edge_types', [])
     
-    print(f" Loaded checkpoint with {len(edge_types)} edge types")
+    print(f"✅ Loaded checkpoint with {len(edge_types)} edge types")
     
     model = LegalHeteroGNN(
         node_types=node_types,
@@ -183,9 +169,10 @@ def load_gnn_model(model_path='legal_gnn_trained_no_cases.pt', device='cpu'):
     model.load_state_dict(checkpoint['model_state_dict'])
     model.eval()
     
-    print(f" Model loaded successfully!")
+    print(f"✅ Model loaded successfully!")
     print(f"   Node types: {node_types}")
     print(f"   Edge types: {len(edge_types)} total")
+    print(f"   Output: Single GNN score (0-1)")
     
     return model, checkpoint
 
@@ -193,7 +180,7 @@ def load_gnn_model(model_path='legal_gnn_trained_no_cases.pt', device='cpu'):
 class GNNPredictor:
     """Easy-to-use predictor for GNN model"""
     
-    def __init__(self, model_path='legal_gnn_trained_no_cases.pt'):
+    def __init__(self, model_path='legal_gnn.pt'):
         self.device = 'cpu'
         self.model, self.checkpoint = load_gnn_model(model_path, self.device)
         self.embedder = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
@@ -237,16 +224,12 @@ class GNNPredictor:
         with torch.no_grad():
             output = self.model(data)
         
-        # Extract scores
+        # ✅ Extract single GNN score
+        gnn_score = output['gnn_score'][0].item()
+        
         result = {
-            'validity': output['validity_scores'][0].item(),
-            'relevance': output['relevance_scores'][0].item(),
-            'coherence': output['coherence_scores'][0].item(),
-            'overall': (
-                output['validity_scores'][0].item() +
-                output['relevance_scores'][0].item() +
-                output['coherence_scores'][0].item()
-            ) / 3
+            'gnn_score': gnn_score,
+            'overall': gnn_score  # Same value
         }
         
         return result
@@ -261,7 +244,10 @@ def predict_claim(claim_text):
     
     Usage:
         result = predict_claim("The defendant violated Section 2")
-        print(result['overall'])
+        print(f"GNN Score: {result['gnn_score']:.1%}")
+    
+    Returns:
+        dict with 'gnn_score' (0-1) and 'overall' (same value)
     """
     global _PREDICTOR
     
@@ -269,5 +255,3 @@ def predict_claim(claim_text):
         _PREDICTOR = GNNPredictor()
     
     return _PREDICTOR.predict(claim_text)
-
-
