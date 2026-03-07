@@ -7,7 +7,7 @@ print("TESTING FUSION NETWORK")
 print("="*60)
 
 # Load model
-fusion = FusionPredictor('fusion_network.pt')
+fusion = FusionPredictor('models/fusion_network.pt')
 
 # Test 1: Good claim
 score1 = fusion.predict(
