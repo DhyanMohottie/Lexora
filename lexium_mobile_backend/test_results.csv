@@ -1,26 +1,26 @@
-id,category,claim,overall,validity,relevance,coherence,expected_validity,expected_relevance,expected_coherence
-1,High Validity,The defendant violated Section 152 of the Motor Tr...,0.3585459192593892,0.35651910305023193,0.32923394441604614,0.38988471031188965,90-95%,88-92%,90-95%
-2,High Validity,Plaintiff alleges breach of contract under Section...,0.6775801380475363,0.6810756325721741,0.6642542481422424,0.6874105334281921,85-92%,88-93%,85-90%
-3,High Validity,The respondent contravened Section 4 of the Animal...,0.2758760452270508,0.2575804889202118,0.24563908576965332,0.32440856099128723,85-90%,85-90%,88-92%
-4,High Validity,Under Section 10 of the Bribery Act and pursuant t...,0.7476760546366373,0.784547746181488,0.7626152634620667,0.6958651542663574,88-93%,90-95%,87-92%
-5,High Validity,The plaintiff invokes Section 68 of the Civil Law ...,0.8763101100921631,0.8796126246452332,0.8752760291099548,0.8740416765213013,86-91%,84-89%,88-93%
-6,Medium Validity,The party may have violated traffic regulations wh...,0.7890069087346395,0.7714806795120239,0.7929946780204773,0.8025453686714172,65-72%,60-67%,68-75%
-7,Medium Validity,There could be a contractual dispute under relevan...,0.8214309414227804,0.8463591933250427,0.8005926609039307,0.8173409700393677,62-68%,64-70%,63-68%
-8,Medium Validity,"Based on the Animals Act, damages are claimed for ...",0.37862712144851685,0.3864021301269531,0.36680445075035095,0.38267478346824646,68-74%,70-76%,67-72%
-9,Medium Validity,The defendant violated Section 2 but failed to pro...,0.4889444013436635,0.514983594417572,0.4375818073749542,0.5142678022384644,60-66%,58-64%,64-69%
-10,Medium Validity,"Pursuant to legal requirements, the respondent did...",0.6167151927947998,0.6132175922393799,0.6138373613357544,0.6230906248092651,64-70%,63-69%,68-73%
-11,Low Validity,I think someone did something wrong and they shoul...,0.16273218393325806,0.17836974561214447,0.1558694690465927,0.153957337141037,25-32%,20-27%,28-35%
-12,Low Validity,The defendant is guilty because everyone knows wha...,0.7181459267934164,0.7388356924057007,0.6851580739021301,0.7304440140724182,22-28%,24-30%,22-28%
-13,Low Validity,This violates the law of being mean and causing pr...,0.855935533841451,0.8561424016952515,0.843654215335846,0.8680099844932556,15-22%,13-19%,18-24%
-14,Low Validity,My neighbor's actions are wrong and I want justice...,0.5255832175413767,0.5640654563903809,0.4847542345523834,0.527929961681366,20-26%,17-23%,23-29%
-15,Low Validity,They broke the rules and must face consequences un...,0.8714349865913391,0.8804632425308228,0.8622704148292542,0.8715713024139404,28-35%,26-32%,30-37%
-16,Gibberish,abkjnlklnlkqd asjkdhaskjd qwoieuqowie asdjhasjkdh...,0.48434539635976154,0.4951796233654022,0.45168235898017883,0.5061742067337036,5-12%,3-10%,5-12%
-17,Non-Legal,I went for a walk yesterday and bought some grocer...,0.7839341362317404,0.7801336050033569,0.7724967002868652,0.7991721034049988,10-16%,8-14%,70-85%
-18,Non-Legal,The weather is nice today so I decided to drink so...,0.4198037286599477,0.42336660623550415,0.39729058742523193,0.43875399231910706,7-13%,6-12%,72-87%
-19,Word Order - Intact Phrases,duty care Section 2 Act violated Motor Traffic def...,0.7547205686569214,0.7712271809577942,0.7352930307388306,0.7576414942741394,68-75%,60-68%,68-75%
-20,Word Order - Partial Order,defendant Act 2 violated Motor Section duty Traffi...,0.6564379533131918,0.6484904289245605,0.6529044508934021,0.6679189801216125,70-77%,72-78%,68-75%
-21,Word Order - Complete Scramble,Section Motor violated 2 defendant Act duty Traffi...,0.7463232477506002,0.7725012898445129,0.6956099271774292,0.7708585262298584,24-31%,25-32%,26-33%
-22,Edge Case - Hallucinated Citation,The defendant violated Section 999 of the Fictitio...,0.14367643495400748,0.14295825362205505,0.14532268047332764,0.1427483707666397,10-20%,35-45%,40-50%
-23,Edge Case - Over-Complex,"Under the Contract Act and Tort Law principles, co...",0.7021880348523458,0.7184159159660339,0.6737644672393799,0.7143837213516235,54-62%,58-66%,50-58%
-24,"Edge Case - Good Grammar, No Legal Basis",The defendant clearly demonstrated a pattern of mi...,0.4458269476890564,0.4683884084224701,0.39761263132095337,0.4714798033237457,20-28%,35-43%,88-95%
-25,"Edge Case - Valid Citation, Wrong Context",The defendant violated Section 152 of Motor Traffi...,0.5601692994435629,0.5353949666023254,0.552993655204773,0.5921192765235901,78-86%,15-23%,65-73%
+id,category,claim,overall,validity,relevance,coherence,error
+1,High Validity,The defendant violated Section 152 of the Motor Tr...,0,0,0,0,'validity'
+2,High Validity,Plaintiff alleges breach of contract under Section...,0,0,0,0,'validity'
+3,High Validity,The respondent contravened Section 4 of the Animal...,0,0,0,0,'validity'
+4,High Validity,Under Section 10 of the Bribery Act and pursuant t...,0,0,0,0,'validity'
+5,High Validity,The plaintiff invokes Section 68 of the Civil Law ...,0,0,0,0,'validity'
+6,Medium Validity,The party may have violated traffic regulations wh...,0,0,0,0,'validity'
+7,Medium Validity,There could be a contractual dispute under relevan...,0,0,0,0,'validity'
+8,Medium Validity,"Based on the Animals Act, damages are claimed for ...",0,0,0,0,'validity'
+9,Medium Validity,The defendant violated Section 2 but failed to pro...,0,0,0,0,'validity'
+10,Medium Validity,"Pursuant to legal requirements, the respondent did...",0,0,0,0,'validity'
+11,Low Validity,I think someone did something wrong and they shoul...,0,0,0,0,'validity'
+12,Low Validity,The defendant is guilty because everyone knows wha...,0,0,0,0,'validity'
+13,Low Validity,This violates the law of being mean and causing pr...,0,0,0,0,'validity'
+14,Low Validity,My neighbor's actions are wrong and I want justice...,0,0,0,0,'validity'
+15,Low Validity,They broke the rules and must face consequences un...,0,0,0,0,'validity'
+16,Gibberish,abkjnlklnlkqd asjkdhaskjd qwoieuqowie asdjhasjkdh...,0,0,0,0,'validity'
+17,Non-Legal,I went for a walk yesterday and bought some grocer...,0,0,0,0,'validity'
+18,Non-Legal,The weather is nice today so I decided to drink so...,0,0,0,0,'validity'
+19,Word Order - Intact Phrases,duty care Section 2 Act violated Motor Traffic def...,0,0,0,0,'validity'
+20,Word Order - Partial Order,defendant Act 2 violated Motor Section duty Traffi...,0,0,0,0,'validity'
+21,Word Order - Complete Scramble,Section Motor violated 2 defendant Act duty Traffi...,0,0,0,0,'validity'
+22,Edge Case - Hallucinated Citation,The defendant violated Section 999 of the Fictitio...,0,0,0,0,'validity'
+23,Edge Case - Over-Complex,"Under the Contract Act and Tort Law principles, co...",0,0,0,0,'validity'
+24,"Edge Case - Good Grammar, No Legal Basis",The defendant clearly demonstrated a pattern of mi...,0,0,0,0,'validity'
+25,"Edge Case - Valid Citation, Wrong Context",The defendant violated Section 152 of Motor Traffi...,0,0,0,0,'validity'
