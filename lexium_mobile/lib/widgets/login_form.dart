@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lexium_mobile/services/auth_service.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
