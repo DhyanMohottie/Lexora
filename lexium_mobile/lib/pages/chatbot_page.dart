@@ -116,7 +116,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
               const SizedBox(height: 6),
               _buildConfidenceBadge(message.confidence!),
               if (message.wasCorrected)
-                const Text('✓ Self-corrected',
+                const Text('  Self-corrected',
                     style: TextStyle(fontSize: 10, color: Colors.green)),
             ],
           ],
@@ -153,10 +153,14 @@ class _ChatBotPageState extends State<ChatBotPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lexium AI Assistant'),
         centerTitle: true,
+        toolbarHeight: isLandscape ? 36 : kToolbarHeight,
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert),
@@ -212,17 +216,22 @@ class _ChatBotPageState extends State<ChatBotPage> {
               child: Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: _controller,
-                      decoration: InputDecoration(
-                        hintText: 'Ask a legal question...',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24)),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: isLandscape ? 50 : 120,
                       ),
-                      onSubmitted: _sendMessage,
-                      maxLines: null,
+                      child: TextField(
+                        controller: _controller,
+                        decoration: InputDecoration(
+                          hintText: 'Ask a legal question...',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(24)),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                        ),
+                        onSubmitted: _sendMessage,
+                        maxLines: null,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
