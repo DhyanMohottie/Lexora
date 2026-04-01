@@ -11,6 +11,7 @@
         "flutter",
         "font_awesome_flutter",
         "http",
+        "provider",
         "shared_preferences"
       ],
       "devDependencies": [
@@ -406,6 +407,22 @@
       "dependencies": [
         "meta",
         "path"
+      ]
+    },
+    {
+      "name": "provider",
+      "version": "6.1.5+1",
+      "dependencies": [
+        "collection",
+        "flutter",
+        "nested"
+      ]
+    },
+    {
+      "name": "nested",
+      "version": "1.0.0",
+      "dependencies": [
+        "flutter"
       ]
     }
   ],

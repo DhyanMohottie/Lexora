@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lexium_mobile/widgets/login_form.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+//import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -14,7 +14,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.max,
@@ -25,13 +25,18 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 30),
             Icon(Icons.gavel, size: 128, color: Colors.blue),
             const SizedBox(height: 30),
-            const Text(
+            Text(
               'Lexium',
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface),
             ),
-            const Text(
+            Text(
               'Sign in or create an Account to Continue!',
-              style: TextStyle(fontSize: 15),
+              style: TextStyle(
+                  fontSize: 15,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             const LoginForm(),
 /*

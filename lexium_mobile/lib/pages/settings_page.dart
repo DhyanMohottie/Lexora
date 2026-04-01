@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:lexium_mobile/providers/theme_provider.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -13,7 +15,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
       resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsetsGeometry.symmetric(horizontal: 8.0),
@@ -24,25 +26,29 @@ class _SettingsPageState extends State<SettingsPage> {
               const SizedBox(height: 20),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: const Text(
+                child: Text(
                   'My Profile',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface),
                 ),
               ),
               const SizedBox(height: 10),
-               Card(
+              Card(
                 child: Column(
                   children: [
                     ListTile(
                       leading: Icon(Icons.person),
                       title: Text('Username'),
-                      subtitle: Text('user@gmail.com'),
+                      subtitle: Text('user'),
                       trailing: Icon(Icons.chevron_right),
                     ),
-                    Divider(color:Colors.grey[300], thickness: 1),
+                    Divider(color: Colors.grey[300], thickness: 1),
                     ListTile(
-                      title: Text('Phone Number'),
-                      subtitle: Text('+94 712345678'),
+                      leading: Icon(Icons.email),
+                      title: Text('Email'),
+                      subtitle: Text('user@gmail.com'),
                       trailing: Icon(Icons.chevron_right),
                     ),
                   ],
@@ -51,13 +57,14 @@ class _SettingsPageState extends State<SettingsPage> {
               const SizedBox(height: 20),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: const Text(
+                child: Text(
                   'Account Settings',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface),
                 ),
               ),
               const SizedBox(height: 10),
-
               const Card(
                 child: Column(
                   children: [
@@ -69,18 +76,18 @@ class _SettingsPageState extends State<SettingsPage> {
                   ],
                 ),
               ),
-
               const SizedBox(height: 20),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: const Text(
+                child: Text(
                   'Preferences',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface),
                 ),
               ),
               const SizedBox(height: 10),
-
-              const Card(
+              Card(
                 child: Column(
                   children: [
                     ListTile(
@@ -88,10 +95,21 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: Text('Notifications'),
                       trailing: Icon(Icons.chevron_right),
                     ),
-                    ListTile(
-                      leading: Icon(Icons.light_mode),
-                      title: Text('Appearance'),
-                      trailing: Icon(Icons.chevron_right),
+                    Consumer<ThemeProvider>(
+                      builder: (context, themeProvider, _) {
+                        return ListTile(
+                          leading: Icon(
+                            themeProvider.isDark
+                                ? Icons.dark_mode
+                                : Icons.light_mode,
+                          ),
+                          title: const Text('Appearance'),
+                          trailing: Switch(
+                            value: themeProvider.isDark,
+                            onChanged: (_) => themeProvider.toggleTheme(),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -99,7 +117,7 @@ class _SettingsPageState extends State<SettingsPage> {
               const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {
-                 Navigator.pushReplacementNamed(context, '/login');
+                  Navigator.pushReplacementNamed(context, '/login');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
