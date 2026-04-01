@@ -49,11 +49,11 @@ class _LoginFormState extends State<LoginForm> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             
-            const Align(
+             Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 'Email Address:',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.onSurface),
               ),
             ),
             const SizedBox(height: 8),
@@ -61,7 +61,7 @@ class _LoginFormState extends State<LoginForm> {
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               onChanged: (_) => setState(() => _errorMessage = null),
-              decoration: const InputDecoration(
+              decoration:  InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Enter your Email',
               ),
@@ -75,11 +75,14 @@ class _LoginFormState extends State<LoginForm> {
             ),
             const SizedBox(height: 20),
 
-            const Align(
+             Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 'Password:',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface),
               ),
             ),
             const SizedBox(height: 8),
@@ -117,20 +120,20 @@ class _LoginFormState extends State<LoginForm> {
                   vertical: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.red.shade50,
+                  color: Theme.of(context).colorScheme.errorContainer,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.red.shade200),
+                  border: Border.all(color: Theme.of(context).colorScheme.error),
                 ),
                 child: Row(
                   children: [
                     Icon(Icons.error_outline,
-                        color: Colors.red.shade700, size: 18),
+                        color: Theme.of(context).colorScheme.onErrorContainer, size: 18),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         _errorMessage!,
                         style: TextStyle(
-                          color: Colors.red.shade700,
+                          color: Theme.of(context).colorScheme.onErrorContainer,
                           fontSize: 14,
                         ),
                       ),
@@ -152,12 +155,12 @@ class _LoginFormState extends State<LoginForm> {
                 minimumSize: const Size(double.infinity, 50),
               ),
               child: _isLoading
-                  ? const SizedBox(
+                  ?  SizedBox(
                       height: 20,
                       width: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     )
                   : const Text("Sign In"),
@@ -167,8 +170,8 @@ class _LoginFormState extends State<LoginForm> {
             ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, '/signup'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                foregroundColor: Theme.of(context).colorScheme.onSurface,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
