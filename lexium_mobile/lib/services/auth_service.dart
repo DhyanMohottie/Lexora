@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthService {
   // Change this to your machine's IP when testing on a real device
   // Use 10.0.2.2 for Android emulator, localhost for iOS simulator
-  static const String baseUrl = 'http://10.0.2.2:3000/api';
+  static const String baseUrl = 'http://192.168.1.6:3000/api';
 
   // ─── Sign Up ───────────────────────────────────────────────────────────────
   static Future<Map<String, dynamic>> signup({
@@ -28,7 +28,10 @@ class AuthService {
         return {'success': false, 'message': data['message']};
       }
     } catch (e) {
-      return {'success': false, 'message': 'Network error. Check your connection.'};
+      return {
+        'success': false,
+        'message': 'Network error. Check your connection.'
+      };
     }
   }
 
@@ -38,11 +41,16 @@ class AuthService {
     required String password,
   }) async {
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/auth/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
-      );
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/auth/login'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'email': email, 'password': password}),
+          )
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () => throw Exception('Request timed out'),
+          );
 
       final data = jsonDecode(response.body);
 
@@ -53,7 +61,10 @@ class AuthService {
         return {'success': false, 'message': data['message']};
       }
     } catch (e) {
-      return {'success': false, 'message': 'Network error. Check your connection.'};
+      return {
+        'success': false,
+        'message': 'Network error. Check your connection.'
+      };
     }
   }
 

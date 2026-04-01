@@ -22,6 +22,9 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(width: double.infinity),
+            const SizedBox(height: 30),
+            Icon(Icons.gavel, size: 128, color: Colors.blue),
+            const SizedBox(height: 30),
             const Text(
               'Lexium',
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
@@ -31,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
               style: TextStyle(fontSize: 15),
             ),
             const LoginForm(),
-
+/*
             Row(
               children: const [
                 Expanded(child: Divider(color: Colors.grey, thickness: 1)),
@@ -77,6 +80,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
+            */
           ],
         ),
       ),
