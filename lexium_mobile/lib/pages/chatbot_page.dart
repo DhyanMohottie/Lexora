@@ -79,7 +79,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color),
       ),
@@ -101,16 +101,28 @@ class _ChatBotPageState extends State<ChatBotPage> {
         constraints:
             BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
         decoration: BoxDecoration(
-          color: isUser ? Colors.blue[600] : Colors.white,
+          color: isUser
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+          boxShadow: [
+            BoxShadow(
+              color:
+                  Theme.of(context).colorScheme.shadow.withValues(alpha: 0.1),
+              blurRadius: 4,
+            )
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               message.text,
-              style: TextStyle(color: isUser ? Colors.white : Colors.black87),
+              style: TextStyle(
+                color: isUser
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onSurface,
+              ),
             ),
             if (message.confidence != null) ...[
               const SizedBox(height: 6),
@@ -126,7 +138,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
   }
 
   Widget _buildWelcomeScreen() {
-    return const Center(
+    return Center(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -136,13 +148,21 @@ class _ChatBotPageState extends State<ChatBotPage> {
             SizedBox(height: 16),
             Text(
               'Welcome to Lexium AI Assistant',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 10),
             Text(
               'Ask me about Sri Lankan law, tenant rights, contract law, or other legal topics.',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
+              style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7)),
               textAlign: TextAlign.center,
             ),
           ],
@@ -187,7 +207,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
         ],
       ),
       resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Column(
@@ -211,7 +231,10 @@ class _ChatBotPageState extends State<ChatBotPage> {
                     ),
             ),
             Container(
-              color: Colors.white,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.05),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Row(
                 children: [
@@ -240,7 +263,7 @@ class _ChatBotPageState extends State<ChatBotPage> {
                         ? null
                         : () => _sendMessage(_controller.text),
                     icon: const Icon(Icons.send),
-                    color: Colors.blue,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ],
               ),

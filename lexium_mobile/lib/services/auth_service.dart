@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthService {
   // Change this to your machine's IP when testing on a real device
   // Use 10.0.2.2 for Android emulator, localhost for iOS simulator
-  static const String baseUrl = 'http://192.168.1.6:3000/api';
+  static const String baseUrl = 'http://172.20.10.3:3000/api';
 
   // ─── Sign Up ───────────────────────────────────────────────────────────────
   static Future<Map<String, dynamic>> signup({
