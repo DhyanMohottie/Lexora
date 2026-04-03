@@ -6,6 +6,7 @@ class SignupController {
   final GlobalKey<FormState> formKey;
   final TextEditingController emailController;
   final TextEditingController passwordController;
+  final TextEditingController usernameController;
   final void Function(bool) setLoading;
   final void Function(String?) setError;
 
@@ -14,6 +15,7 @@ class SignupController {
     required this.formKey,
     required this.emailController,
     required this.passwordController,
+    required this.usernameController,
     required this.setLoading,
     required this.setError,
   });
@@ -37,12 +39,12 @@ class SignupController {
       final result = await AuthService.signup(
         email: emailController.text.trim(),
         password: passwordController.text,
+        username: usernameController.text.trim(),
       );
 
       _isLoading = false;
-      setLoading(false);
-
       if (!context.mounted) return;
+      setLoading(false);
 
       if (result['success']) {
         Navigator.pushNamedAndRemoveUntil(
@@ -51,12 +53,12 @@ class SignupController {
           (route) => false,
         );
       } else {
-  
         passwordController.clear();
         setError(result['message'] ?? 'Could not create account. Try again.');
       }
     } catch (e) {
       _isLoading = false;
+      if (!context.mounted) return;
       setLoading(false);
       passwordController.clear();
       setError('Something went wrong. Please try again.');

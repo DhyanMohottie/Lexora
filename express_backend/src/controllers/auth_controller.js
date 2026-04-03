@@ -3,13 +3,13 @@ const { createUser, loginUser } = require('../services/auth_service');
 // @route   POST /api/auth/signup
 const signup = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, username } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
+    if (!email || !password || !username) {
+      return res.status(400).json({ message: 'Email, username, and password are required' });
     }
 
-    const data = await createUser(email, password);
+    const data = await createUser(email, password, username);
 
     res.status(201).json({
       message: 'Account created successfully',
@@ -46,6 +46,7 @@ const getMe = async (req, res) => {
     user: {
       id: req.user._id,
       email: req.user.email,
+      username: req.user.username,
     },
   });
 };

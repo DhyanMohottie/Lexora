@@ -14,7 +14,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Create Account'), centerTitle: true),
       resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -24,14 +24,20 @@ class _SignUpPageState extends State<SignUpPage> {
             children: [
               const SizedBox(width: double.infinity),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 'Get Started',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface),
               ),
-               const SizedBox(height: 10),
-              const Text(
+              const SizedBox(height: 10),
+              Text(
                 'Create an Account to Access legal information.',
-                style: TextStyle(fontSize: 14),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: 20),
               const SignupForm(),
