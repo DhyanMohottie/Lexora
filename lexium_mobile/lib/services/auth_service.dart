@@ -11,12 +11,13 @@ class AuthService {
   static Future<Map<String, dynamic>> signup({
     required String email,
     required String password,
+    required String username,
   }) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/auth/signup'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
+        body: jsonEncode({'email': email, 'password': password, 'username': username}),
       );
 
       final data = jsonDecode(response.body);

@@ -9,7 +9,7 @@ const generateToken = (id) => {
 };
 
 // ─── Create a new user ────────────────────────────────────────────────────
-const createUser = async (email, password) => {
+const createUser = async (email, password, username) => {
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     const error = new Error('Email already in use');
@@ -17,12 +17,12 @@ const createUser = async (email, password) => {
     throw error;
   }
 
-  const user = await User.create({ email, password });
+  const user = await User.create({ email, password, username });
   const token = generateToken(user._id);
 
   return {
     token,
-    user: { id: user._id, email: user.email },
+    user: { id: user._id, email: user.email, username: user.username },
   };
 };
 
