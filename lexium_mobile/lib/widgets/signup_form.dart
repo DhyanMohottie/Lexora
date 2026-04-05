@@ -102,7 +102,8 @@ class _SignupFormState extends State<SignupForm> {
                 if (value == null || value.isEmpty) {
                   return 'Username is required';
                 }
-                if (value.length < 3) return 'Username must be at least 3 characters';
+                if (value.length < 3)
+                  return 'Username must be at least 3 characters';
                 return null;
               },
             ),
@@ -135,8 +136,9 @@ class _SignupFormState extends State<SignupForm> {
                 ),
               ),
               validator: (value) {
-                if (value == null || value.isEmpty)
+                if (value == null || value.isEmpty) {
                   return 'Password is required';
+                }
                 if (value.length < 6) return 'Minimum 6 characters';
                 return null;
               },
@@ -152,8 +154,8 @@ class _SignupFormState extends State<SignupForm> {
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.errorContainer,
                   borderRadius: BorderRadius.circular(8),
-                  border:
-                      Border.all(color: Theme.of(context).colorScheme.onErrorContainer),
+                  border: Border.all(
+                      color: Theme.of(context).colorScheme.onErrorContainer),
                 ),
                 child: Row(
                   children: [

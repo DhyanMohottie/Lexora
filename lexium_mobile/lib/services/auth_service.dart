@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthService {
   // Change this to your machine's IP when testing on a real device
   // Use 10.0.2.2 for Android emulator, localhost for iOS simulator
-  static const String baseUrl = 'http://172.20.10.3:3000/api';
+  static const String baseUrl = 'http://192.168.8.169:3000/api';
 
   // ─── Sign Up ───────────────────────────────────────────────────────────────
   static Future<Map<String, dynamic>> signup({
@@ -17,7 +17,8 @@ class AuthService {
       final response = await http.post(
         Uri.parse('$baseUrl/auth/signup'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password, 'username': username}),
+        body: jsonEncode(
+            {'email': email, 'password': password, 'username': username}),
       );
 
       final data = jsonDecode(response.body);
@@ -75,19 +76,45 @@ class AuthService {
     await prefs.remove('auth_token');
   }
 
-  // ─── Get saved token ───────────────────────────────────────────────────────
+// Get current user
+  static Future<Map<String, dynamic>> getMe() async {
+    try {
+      final token = await getToken();
+      if (token == null) return {'success': false, 'message': 'Not logged in'};
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/auth/me'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return {'success': true, 'data': data};
+      } else {
+        return {'success': false, 'message': data['message']};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Network error.'};
+    }
+  }
+
+  //Get saved token
   static Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('auth_token');
   }
 
-  // ─── Check if logged in ────────────────────────────────────────────────────
+  //Check if logged in
   static Future<bool> isLoggedIn() async {
     final token = await getToken();
     return token != null;
   }
 
-  // ─── Private: save token ───────────────────────────────────────────────────
+  //Private: save token
   static Future<void> _saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('auth_token', token);
