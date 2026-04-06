@@ -7,7 +7,7 @@ class AuthService {
   // Use 10.0.2.2 for Android emulator, localhost for iOS simulator
   static const String baseUrl = 'http://192.168.8.169:3000/api';
 
-  // ─── Sign Up ───────────────────────────────────────────────────────────────
+  //Sign Up
   static Future<Map<String, dynamic>> signup({
     required String email,
     required String password,
@@ -37,7 +37,7 @@ class AuthService {
     }
   }
 
-  // ─── Login ─────────────────────────────────────────────────────────────────
+  //Login
   static Future<Map<String, dynamic>> login({
     required String email,
     required String password,
@@ -70,7 +70,7 @@ class AuthService {
     }
   }
 
-  // ─── Logout ────────────────────────────────────────────────────────────────
+  //Logout
   static Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_token');
@@ -94,6 +94,113 @@ class AuthService {
 
       if (response.statusCode == 200) {
         return {'success': true, 'data': data};
+      } else {
+        return {'success': false, 'message': data['message']};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Network error.'};
+    }
+  }
+
+  //Update Email
+
+  static Future<Map<String, dynamic>> updateEmail({
+    required String currentPassword,
+    required String newEmail,
+  }) async {
+    try {
+      final token = await getToken();
+      if (token == null) return {'success': false, 'message': 'Not logged in'};
+
+      final response = await http
+          .put(
+            Uri.parse('$baseUrl/auth/update-email'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: jsonEncode({
+              'currentPassword': currentPassword,
+              'newEmail': newEmail,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return {'success': true, 'message': data['message']};
+      } else {
+        return {'success': false, 'message': data['message']};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Network error.'};
+    }
+  }
+
+//Update Username
+
+  static Future<Map<String, dynamic>> updateUsername({
+    required String currentPassword,
+    required String newUsername,
+  }) async {
+    try {
+      final token = await getToken();
+      if (token == null) return {'success': false, 'message': 'Not logged in'};
+
+      final response = await http
+          .put(
+            Uri.parse('$baseUrl/auth/update-username'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: jsonEncode({
+              'currentPassword': currentPassword,
+              'newUsername': newUsername,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return {'success': true, 'message': data['message']};
+      } else {
+        return {'success': false, 'message': data['message']};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Network error.'};
+    }
+  }
+
+//Update Password
+  static Future<Map<String, dynamic>> updatePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      final token = await getToken();
+      if (token == null) return {'success': false, 'message': 'Not logged in'};
+
+      final response = await http
+          .put(
+            Uri.parse('$baseUrl/auth/update-password'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: jsonEncode({
+              'currentPassword': currentPassword,
+              'newPassword': newPassword,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return {'success': true, 'message': data['message']};
       } else {
         return {'success': false, 'message': data['message']};
       }

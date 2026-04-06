@@ -6,6 +6,7 @@ import 'package:lexium_mobile/pages/signup_page.dart';
 import 'package:lexium_mobile/pages/chatbot_page.dart';
 import 'package:provider/provider.dart';
 import 'package:lexium_mobile/providers/theme_provider.dart';
+import 'package:lexium_mobile/pages/manage_account_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,6 +61,7 @@ class AppRoot extends StatelessWidget {
         '/signup': (context) => const SignUpPage(),
         '/settings': (context) => const SettingsPage(),
         '/chatbot': (context) => const ChatBotPage(),
+        '/manage-account': (context) => const ManageAccountPage(),
       },
       builder: (context, child) {
         return SafeArea(child: child!);
