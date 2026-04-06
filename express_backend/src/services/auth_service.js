@@ -1,14 +1,14 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const User = require('../models/user');
 
-// ─── Generate JWT Token ────────────────────────────────────────────────────
+//Generate JWT Token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   });
 };
 
-// ─── Create a new user ────────────────────────────────────────────────────
+//Create a new user
 const createUser = async (email, password, username) => {
   const existingUser = await User.findOne({ email });
   if (existingUser) {
@@ -26,7 +26,7 @@ const createUser = async (email, password, username) => {
   };
 };
 
-// ─── Validate credentials and log in ──────────────────────────────────────
+//Validate credentials and log in
 const loginUser = async (email, password) => {
   const user = await User.findOne({ email });
   if (!user || !(await user.comparePassword(password))) {
@@ -39,8 +39,59 @@ const loginUser = async (email, password) => {
 
   return {
     token,
-    user: { id: user._id, email: user.email },
+    user: { id: user._id, email: user.email, username: user.username },
   };
 };
 
-module.exports = { createUser, loginUser };
+//Update Email
+const updateEmail = async (userId, currentPassword, newEmail) => {
+  const user = await User.findById(userId);
+  if (!user || !(await user.comparePassword(currentPassword))) {
+    const error = new Error('Current password is incorrect');
+    error.statusCode = 401;
+    throw error;
+  }
+
+  const existingUser = await User.findOne({ email: newEmail });
+  if (existingUser) {
+    const error = new Error('Email already in use');
+    error.statusCode = 409;
+    throw error;
+  }
+
+  user.email = newEmail;
+  await user.save();
+
+  return { user: { id: user._id, email: user.email, username: user.username } };
+};
+
+//Update Username
+const updateUsername = async (userId, currentPassword, newUsername) => {
+  const user = await User.findById(userId);
+  if (!user || !(await user.comparePassword(currentPassword))) {
+    const error = new Error('Current password is incorrect');
+    error.statusCode = 401;
+    throw error;
+  }
+
+  user.username = newUsername;
+  await user.save();
+
+  return { user: { id: user._id, email: user.email, username: user.username } };
+};
+//Update Password
+const updatePassword = async (userId, currentPassword, newPassword) => {
+  const user = await User.findById(userId);
+  if (!user || !(await user.comparePassword(currentPassword))) {
+    const error = new Error('Current password is incorrect');
+    error.statusCode = 401;
+    throw error;
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  return { message: 'Password updated successfully' };
+};
+
+module.exports = { createUser, loginUser, updateEmail, updateUsername, updatePassword };

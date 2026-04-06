@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:lexium_mobile/providers/theme_provider.dart';
 import 'package:lexium_mobile/services/auth_service.dart';
+import 'package:lexium_mobile/pages/manage_account_page.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -97,13 +98,23 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    const Card(
+                    Card(
                       child: Column(
                         children: [
                           ListTile(
                             leading: Icon(Icons.manage_accounts),
                             title: Text('Manage Account'),
                             trailing: Icon(Icons.chevron_right),
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ManageAccountPage(),
+                                ),
+                              );
+                              _fetchUserData();
+                            },
                           ),
                         ],
                       ),
@@ -152,8 +163,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     const SizedBox(height: 40),
                     ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/login');
+                      onPressed: () async {
+                        final navigator = Navigator.of(context);
+                        await AuthService.logout();
+                        navigator.pushReplacementNamed('/login');
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
